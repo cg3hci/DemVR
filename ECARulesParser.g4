@@ -39,7 +39,7 @@ animal:
 scene:
     SCENE;
 environment:
-    ART | BUILDING | EXTERIOR | FURNITURE | SKY | VEGETATION | TERRAIN;
+    ART | BUILDING | EXTERIOR | FORNITURE | SKY | VEGETATION | TERRAIN;
 prop:
     CLOTHING | ELECTRONIC | FOOD | weapon;
 weapon:
@@ -75,7 +75,7 @@ action :
     aquaticAction | flyingAction | terrestrialAction |
     creatureAction | humanAction | robotAction |
     sceneAction |
-    artAction | buildingAction | exteriorAction | furnitureAction |
+    artAction | buildingAction | exteriorAction | fornitureAction |
     skyAction | vegetationAction | terrainAction |
     clothingAction | electronicAction | foodAction |
     bulletAction | edgedAction | firearmAction | shieldAction
@@ -133,8 +133,8 @@ buildingAction:
 exteriorAction:
     THE EXTERIOR IDENTIFIER (environmentAction);
 
-furnitureAction:
-    THE FURNITURE IDENTIFIER (environmentAction | setPrice | setColor | setDimension);
+fornitureAction:
+    THE FORNITURE IDENTIFIER (environmentAction | setPrice | setColor | setDimension);
 
 skyAction:
     THE SKY IDENTIFIER (environmentAction);
@@ -145,19 +145,24 @@ vegetationAction:
 terrainAction:
     THE TERRAIN IDENTIFIER (environmentAction);
 
+// props actions
+propsActions:
+    objectAction |
+    setPrice;
+
 clothingAction :
-    (THE CLOTHING IDENTIFIER (environmentAction | setBrand | setSize | setColor )) |
+    (THE CLOTHING IDENTIFIER (propsActions | setBrand | setSize | setColor )) |
     wears;
 
 electronicAction :
-    THE ELECTRONIC IDENTIFIER (environmentAction | setBrand | setModel | turns);
+    THE ELECTRONIC IDENTIFIER (propsActions | setBrand | setModel | turns);
 
 foodAction:
-    (THE FOOD (setWeight | setExpiration | setDescription)) |
+    (THE FOOD (propsActions | setWeight | setExpiration | setDescription)) |
     eats;
 
 weaponAction:
-    environmentAction | setPower;
+    propsActions | setPower;
 
 bulletAction:
     THE BULLET IDENTIFIER (weaponAction | setSpeed);
@@ -214,11 +219,11 @@ textAction:
 
 videoAction:
     THE VIDEO IDENTIFIER (interactionActions | plays | pauses
-    | stops | setSource | setVolume | setCurrentTime);
+    | stops | setSource | setVolume | setMaxVolume | setCurrentTime | setDuration);
 
 // behaviour actions
 containerAction:
-    contains | removes | empties | THE object IDENTIFIER setCapacity;
+    insertsObject | removes | empties | THE object IDENTIFIER setCapacity;
 
 collectableAction:
     collects;
@@ -241,7 +246,7 @@ particleAction:
 soundAction:
     THE object IDENTIFIER
         (setSoundSource | setSoundVolume | setSoundMaxVolume | setSoundCurrentTime
-         playSound |pauseSound | stopSound  );
+         setSoundDuration | playSound |pauseSound | stopSound  );
 
 placeholderAction:
     ;
@@ -419,6 +424,9 @@ setDimension:
     (INCREASES | DECREASES) DIMENSION (BY floatLiteral)? |
     CHANGES DIMENSION TO floatLiteral;
 
+setDuration:
+    CHANGES DURATION TO TIME_LITERAL;
+
 setHighlight:
     SWITCHES HIGHLIGHT TO (ON | OFF);
 
@@ -454,6 +462,10 @@ setMaxIntensity:
     (INCREASES | DECREASES) MAXINTENSITY (BY floatLiteral)? |
      CHANGES MAXINTENSITY TO floatLiteral;
 
+setMaxVolume:
+    (INCREASES | DECREASES) MAXVOLUME (BY floatLiteral)? |
+         CHANGES MAXVOLUME TO floatLiteral;
+
 setModel:
     CHANGES MODEL TO STRING_LITERAL;
 
@@ -484,6 +496,9 @@ setPointOfView:
 setSpeed:
     (INCREASES | DECREASES) SPEED (BY floatLiteral KMH)? |
     CHANGES SPEED TO floatLiteral KMH;
+
+setSoundDuration:
+     CHANGES SOUNDDURATION TO TIME_LITERAL;
 
 setSoundSource:
     CHANGES SOUNDSOURCE TO STRING_LITERAL;
@@ -529,8 +544,8 @@ setZoom:
 collects:
     THE character IDENTIFIER COLLECTS reference;
 
-contains:
-    THE object IDENTIFIER CONTAINS reference;
+insertsObject:
+    THE object IDENTIFIER INSERTS reference;
 
 removes:
     THE object IDENTIFIER REMOVES reference;
@@ -558,7 +573,265 @@ userScales:
 
 
 
-condition : AND;
-complement: OR;
+condition :
+    baseCondition |
+    NOT condition |
+    condition (AND | OR) condition |
+    LPAREN condition RPAREN;
+
+baseCondition:
+        aquaticCondition | flyingCondition | terrestrialCondition |
+        creatureCondition | humanCondition | robotCondition |
+        sceneCondition |
+        artCondition | buildingCondition | exteriorCondition | fornitureCondition |
+        skyCondition | vegetationCondition | terrainCondition |
+        clothingCondition | electronicCondition | foodCondition |
+        bulletCondition | edgedCondition | firearmCondition | shieldCondition
+        airVehicleCondition | landVehicleCondition | seaVehicleCondition | spaceVehicleCondition
+        boundsCondition | buttonCondition | cameraCondition | imageCondition |
+        lightCondition | textCondition | videoCondition |
+        containerCondition | collectableCondition | counterCondition | highlightCondition
+        keypadCondition | lockCondition | particleCondition | soundCondition | placeholderCondition
+        switchCondition | transitionCondition | triggerCondition | timerCondition
+    ;
+
+numberOp: EQUAL | GT | LT | GE | LE | NOTEQUAL;
+
+// object properties
+objectCondition :
+    POSITION IS positionLiteral |
+    ROTATION IS angle |
+    LOOKS AT reference;
+
+// character properties
+characterCondition :
+    objectCondition |
+    LIFE numberOp floatLiteral |
+    PLAYING IS BOOL_YES_NO;
+
+aquaticCondition :
+    characterCondition;
+
+flyingCondition:
+    characterCondition;
+
+terrestrialCondition:
+    characterCondition;
+
+humanCondition:
+    characterCondition;
+
+creatureCondition:
+    characterCondition;
+
+robotCondition:
+    characterCondition;
+
+// scene properties
+sceneCondition:
+    objectCondition;
+
+// environment properties
+environmentCondition:
+    objectCondition;
+
+artCondition:
+    THE ART IDENTIFIER
+    (environmentCondition |
+    AUTHOR IS STRING_LITERAL |
+    YEAR  DECIMAL_LITERAL |
+    PRICE numberOp floatLiteral);
+
+buildingCondition:
+    THE BUILDING IDENTIFIER
+    environmentCondition;
+
+exteriorCondition:
+    THE EXTERIOR IDENTIFIER
+    environmentCondition;
+
+fornitureCondition:
+    THE FORNITURE IDENTIFIER (
+    environmentCondition |
+    PRICE numberOp floatLiteral |
+    COLOR IS color |
+    DIMENSION numberOp floatLiteral
+    );
+
+skyCondition:
+    THE SKY IDENTIFIER (environmentCondition);
+
+vegetationCondition:
+    THE VEGETATION IDENTIFIER (environmentCondition);
+
+terrainCondition:
+    THE TERRAIN IDENTIFIER (environmentCondition);
+
+propsCondition:
+    objectCondition |
+    PRICE numberOp floatLiteral;
+
+clothingCondition:
+    (THE CLOTHING IDENTIFIER
+        (propsCondition |
+        BRAND IS STRING_LITERAL |
+        COLOR IS color |
+        SIZE IS STRING_LITERAL)) |
+     THE character IDENTIFIER WEARS THE CLOTHING IDENTIFIER;
+
+electronicCondition:
+    THE ELECTRONIC IDENTIFIER
+    (propsCondition |
+    BRAND IS STRING_LITERAL |
+    MODEL IS STRING_LITERAL
+    IS ON | IS OFF);
+
+foodCondition:
+    (THE FOOD IDENTIFIER
+        (propsCondition |
+        WEIGHT numberOp floatLiteral) )|
+    (THE character IDENTIFIER HASEATEN THE FOOD IDENTIFIER);
+
+weaponCondition:
+    propsCondition |
+    POWER numberOp floatLiteral;
+
+bulletCondition:
+    THE BULLET IDENTIFIER
+        (weaponCondition |
+         SPEED numberOp floatLiteral);
+
+edgedCondition:
+    THE EDGED IDENTIFIER (weaponCondition);
+
+firearmCondition:
+    THE FIREARM IDENTIFIER
+        (weaponCondition |
+        CHARGE numberOp DECIMAL_LITERAL);
+
+shieldCondition:
+    THE SHIELD IDENTIFIER (weaponCondition);
+
+// vehicle conditions
+vehicleCondition:
+    objectCondition |
+    SPEED numberOp floatLiteral;
+
+airVehicleCondition:
+    THE AIRVEHICLE IDENTIFIER (vehicleCondition);
+
+landVehicleCondition:
+    THE LANDVEHICLE IDENTIFIER (vehicleCondition);
+
+seaVehicleCondition:
+    THE SEAVEHICLE IDENTIFIER (vehicleCondition);
+
+spaceVehicleCondition:
+    THE SPACEVEHICLE IDENTIFIER
+        (vehicleCondition
+        OXYGEN numberOp floatLiteral
+        GRAVITY numberOp floatLiteral);
+
+// interaction condition
+interactionCondition:
+    objectCondition;
+
+boundsCondition:
+    THE BOUNDS IDENTIFIER
+        (interactionCondition |
+        SCALE numberOp floatLiteral);
+
+buttonCondition:
+    THE BUTTON IDENTIFIER (interactionCondition);
+
+cameraCondition:
+    THE CAMERA IDENTIFIER
+        (interactionCondition |
+        POV IS POV_LITERAL |
+        ZOOM numberOp floatLiteral |
+        PLAYING IS BOOL_YES_NO);
+
+imageCondition:
+    THE IMAGE IDENTIFIER
+        (interactionCondition |
+        SOURCE IS STRING_LITERAL |
+        HEIGHT numberOp floatLiteral |
+        WIDTH numberOp  floatLiteral );
+
+lightCondition:
+    THE LIGHT IDENTIFIER
+    (interactionCondition |
+    INTENSITY numberOp floatLiteral |
+    MAXINTENSITY numberOp floatLiteral |
+    COLOR IS color |
+    IS (ON | OFF));
+
+textCondition:
+    THE TEXT IDENTIFIER
+    (interactionCondition |
+    CONTENT IS STRING_LITERAL);
+
+videoCondition:
+    THE VIDEO IDENTIFIER
+    (interactionCondition |
+    SOURCE IS STRING_LITERAL |
+    VOLUME numberOp floatLiteral |
+    MAXVOLUME numberOp floatLiteral |
+    DURATION numberOp TIME_LITERAL |
+    CURRENTTIME numberOp TIME_LITERAL );
+
+containerCondition:
+    THE object IDENTIFIER  (
+        CONTAINS reference |
+        COUNT numberOp DECIMAL_LITERAL |
+        CAPACITY numberOp DECIMAL_LITERAL);
+
+collectableCondition:
+    THE character IDENTIFIER COLLECTED reference;
+
+counterCondition:
+    THE object IDENTIFIER COUNT numberOp floatLiteral;
+
+highlightCondition:
+    THE object IDENTIFIER
+        (HIGHLIGHT IS (ON | OFF) |
+         HIGHLIGHTCOLOR IS color);
+
+keypadCondition:
+    THE object IDENTIFIER
+        (INPUT IS STRING_LITERAL |
+         KEYCODE IS STRING_LITERAL);
+
+lockCondition:
+    THE object IDENTIFIER LOCKED IS BOOL_YES_NO;
+
+placeholderCondition:;
+
+particleCondition:
+    THE object IDENTIFIER  IS (ON | OFF);
+
+soundCondition:
+    THE object IDENTIFIER
+    (SOUNDSOURCE IS STRING_LITERAL |
+    SOUNDVOLUME numberOp floatLiteral |
+    SOUNDMAXVOLUME numberOp floatLiteral |
+    SOUNDDURATION numberOp TIME_LITERAL
+    SOUNDCURRENTTIME numberOp TIME_LITERAL);
+
+
+switchCondition:
+    THE object IDENTIFIER IS (ON |OFF);
+
+transitionCondition:
+    THE object IDENTIFIER TARGET IS THE SCENE IDENTIFIER;
+
+triggerCondition:;
+
+timerCondition:
+    THE object IDENTIFIER TIMER numberOp TIME_LITERAL;
+
+
+
+
 
 
