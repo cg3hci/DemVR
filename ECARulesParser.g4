@@ -1,6 +1,9 @@
 parser grammar ECARulesParser;
 options {tokenVocab=ECARulesLexer;}
 
+// program
+program: declaration rule* alias;
+
 // variables declaration
 declaration:
     objectDeclaration | positionDeclaration | pathDeclaration | colorDeclaration;
@@ -152,7 +155,7 @@ propsActions:
 
 clothingAction :
     (THE CLOTHING IDENTIFIER (propsActions | setBrand | setSize | setColor )) |
-    wears;
+    wears | unwears;
 
 electronicAction :
     THE ELECTRONIC IDENTIFIER (propsActions | setBrand | setModel | turns);
@@ -223,7 +226,8 @@ videoAction:
 
 // behaviour actions
 containerAction:
-    insertsObject | removes | empties | THE object IDENTIFIER setCapacity;
+    insertsObject | removes | empties |
+    THE object IDENTIFIER (setCapacity | setObjectNumber);
 
 collectableAction:
     collects;
@@ -262,7 +266,7 @@ triggerAction:
     THE object IDENTIFIER (triggers);
 
 timerAction:
-    THE object IDENTIFIER (setTimer | startTimer | stopTimer | pauseTimer | elapseTimer);
+    THE object IDENTIFIER (setTimer | setDuration | startTimer | stopTimer | pauseTimer | elapseTimer | resets);
 
 // verb list
 accelerates:
@@ -469,6 +473,10 @@ setMaxVolume:
 setModel:
     CHANGES MODEL TO STRING_LITERAL;
 
+setObjectNumber:
+    (INCREASES | DECREASES) OBJECTSCOUNT (BY DECIMAL_LITERAL)? |
+        CHANGES OXYGEN TO DECIMAL_LITERAL;
+
 setOxygen:
     (INCREASES | DECREASES) OXYGEN (BY floatLiteral)? |
     CHANGES OXYGEN TO floatLiteral;
@@ -533,8 +541,8 @@ setWeight:
     CHANGES WEIGHT TO floatLiteral KILOS;
 
 setYear:
-    (INCREASES | DECREASES) YEAR (BY floatLiteral)? |
-    CHANGES YEAR TO floatLiteral;
+    (INCREASES | DECREASES) YEAR (BY DECIMAL_LITERAL)? |
+    CHANGES YEAR TO DECIMAL_LITERAL;
 
 setZoom:
     (INCREASES | DECREASES) ZOOM (BY floatLiteral)? |
@@ -558,6 +566,9 @@ eats:
 
 wears:
     THE character IDENTIFIER WEARS THE CLOTHING IDENTIFIER;
+
+unwears:
+    THE character IDENTIFIER UNWEARS THE CLOTHING IDENTIFIER;
 
 userMoves:
     MOVES THE  ((TO position| ON path))?;
@@ -676,7 +687,8 @@ clothingCondition:
         (propsCondition |
         BRAND IS STRING_LITERAL |
         COLOR IS color |
-        SIZE IS STRING_LITERAL)) |
+        SIZE IS STRING_LITERAL |
+        IS WEARED)) |
      THE character IDENTIFIER WEARS THE CLOTHING IDENTIFIER;
 
 electronicCondition:
@@ -778,12 +790,13 @@ videoCondition:
     VOLUME numberOp floatLiteral |
     MAXVOLUME numberOp floatLiteral |
     DURATION numberOp TIME_LITERAL |
-    CURRENTTIME numberOp TIME_LITERAL );
+    CURRENTTIME numberOp TIME_LITERAL |
+    IS (PLAYING | STOPPED | PAUSED));
 
 containerCondition:
     THE object IDENTIFIER  (
         CONTAINS reference |
-        COUNT numberOp DECIMAL_LITERAL |
+        OBJECTSCOUNT numberOp DECIMAL_LITERAL |
         CAPACITY numberOp DECIMAL_LITERAL);
 
 collectableCondition:
@@ -816,7 +829,8 @@ soundCondition:
     SOUNDVOLUME numberOp floatLiteral |
     SOUNDMAXVOLUME numberOp floatLiteral |
     SOUNDDURATION numberOp TIME_LITERAL
-    SOUNDCURRENTTIME numberOp TIME_LITERAL);
+    SOUNDCURRENTTIME numberOp TIME_LITERAL |
+    IS (PLAYING | STOPPED | PAUSED));
 
 
 switchCondition:
@@ -828,7 +842,7 @@ transitionCondition:
 triggerCondition:;
 
 timerCondition:
-    THE object IDENTIFIER TIMER numberOp TIME_LITERAL;
+    THE object IDENTIFIER (TIMER | DURATION) numberOp TIME_LITERAL;
 
 
 
