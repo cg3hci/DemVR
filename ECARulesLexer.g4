@@ -162,6 +162,7 @@ ZOOMSIN:            'zooms-in';
 ZOOMSOUT:           'zooms-out';
 
 // prepositions
+A:                  'a';
 AS:                 'as';
 AT:                 'at';
 AROUND:             'around';

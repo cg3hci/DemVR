@@ -2,7 +2,7 @@ parser grammar ECARulesParser;
 options {tokenVocab=ECARulesLexer;}
 
 // program
-program: declaration rule* alias;
+program: declaration* behaviourDeclaration* rule* alias*;
 
 // variables declaration
 declaration:
@@ -65,7 +65,8 @@ angle:
 color:
     THE COLOR IDENTIFIER;
 
-
+behaviourDeclaration:
+    THE object IDENTIFIER IS A behaviour;
 
 // type alias
 alias:
