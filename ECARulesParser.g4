@@ -2,7 +2,11 @@ parser grammar ECARulesParser;
 options {tokenVocab=ECARulesLexer;}
 
 // program
-program: declaration* behaviourDeclaration* rule* alias*;
+program:
+    declaration+
+    behaviourDeclaration*
+    rule+
+    alias*;
 
 // variables declaration
 declaration:
@@ -66,7 +70,7 @@ color:
     THE COLOR IDENTIFIER;
 
 behaviourDeclaration:
-    THE object IDENTIFIER IS A behaviour;
+    THE object IDENTIFIER HAS A behaviour;
 
 // type alias
 alias:
@@ -93,7 +97,7 @@ action :
 
 // actions for each type
 objectAction:
-    moves | rotates | looksAt;
+    moves | rotates | looksAt | setVisible | setActivable;
 
 // character actions
 characterAction:
@@ -122,7 +126,7 @@ robotAction:
 
 // scene actions
 sceneAction:
-    objectAction;
+    objectAction | enters | leaves;
 
 // environment  actions
 environmentAction:
@@ -399,6 +403,9 @@ zoomsOut:
     ZOOMSOUT;
 
 // setters
+setActivable:
+    CHANGES ACTIVABLE TO BOOL_YES_NO;
+
 setAuthor:
     CHANGES AUTHOR TO STRING_LITERAL;
 
@@ -529,6 +536,9 @@ setTargetScene:
 setTimer:
     CHANGES TIMER TO TIME_LITERAL;
 
+setVisible:
+    CHANGES VISIBLE TO BOOL_YES_NO;
+
 setVolume:
     (INCREASES | DECREASES) VOLUME (BY floatLiteral)? |
         CHANGES VOLUME TO floatLiteral;
@@ -559,11 +569,17 @@ insertsObject:
 removes:
     THE object IDENTIFIER REMOVES reference;
 
+enters:
+    THE character IDENTIFIER ENTERS THE SCENE IDENTIFIER;
+
 empties:
     THE object IDENTIFIER EMPTIES;
 
 eats:
     THE character IDENTIFIER EATS THE FOOD IDENTIFIER;
+
+leaves:
+    THE character IDENTIFIER LEAVES THE SCENE IDENTIFIER;
 
 wears:
     THE character IDENTIFIER WEARS THE CLOTHING IDENTIFIER;
@@ -611,6 +627,8 @@ numberOp: EQUAL | GT | LT | GE | LE | NOTEQUAL;
 
 // object properties
 objectCondition :
+    VISIBLE IS BOOL_YES_NO |
+    ACTIVABLE IS BOOL_YES_NO |
     POSITION IS positionLiteral |
     ROTATION IS angle |
     LOOKS AT reference;
@@ -641,7 +659,8 @@ robotCondition:
 
 // scene properties
 sceneCondition:
-    objectCondition;
+    objectCondition |
+    THE character IDENTIFIER IS INSIDE THE SCENE IDENTIFIER;
 
 // environment properties
 environmentCondition:
