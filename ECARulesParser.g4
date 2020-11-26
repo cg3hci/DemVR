@@ -227,7 +227,7 @@ textAction:
 
 videoAction:
     THE VIDEO IDENTIFIER (interactionActions | plays | pauses
-    | stops | setSource | setVolume | setMaxVolume | setCurrentTime | setDuration);
+    | stops | ends | setSource | setVolume | setMaxVolume | setCurrentTime | setDuration);
 
 // behaviour actions
 containerAction:
@@ -294,6 +294,9 @@ deletes:
 
 elapseTimer:
     TIMERELAPSE;
+
+ends:
+    ENDS;
 
 fires:
     FIRES reference;
@@ -564,7 +567,7 @@ collects:
     THE character IDENTIFIER COLLECTS reference;
 
 insertsObject:
-    THE object IDENTIFIER INSERTS reference;
+    THE object IDENTIFIER GETS reference;
 
 removes:
     THE object IDENTIFIER REMOVES reference;
@@ -646,15 +649,19 @@ flyingCondition:
     characterCondition;
 
 terrestrialCondition:
+    THE TERRESTRIAL IDENTIFIER
     characterCondition;
 
 humanCondition:
+    THE HUMAN IDENTIFIER
     characterCondition;
 
 creatureCondition:
+    THE CREATURE IDENTIFIER
     characterCondition;
 
 robotCondition:
+    THE ROBOT IDENTIFIER
     characterCondition;
 
 // scene properties
@@ -812,7 +819,7 @@ videoCondition:
     MAXVOLUME numberOp floatLiteral |
     DURATION numberOp TIME_LITERAL |
     CURRENTTIME numberOp TIME_LITERAL |
-    IS (PLAYING | STOPPED | PAUSED));
+    IS (PLAYING | STOPPED | PAUSED | ENDED));
 
 containerCondition:
     THE object IDENTIFIER  (
