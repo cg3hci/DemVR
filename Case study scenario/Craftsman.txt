@@ -6,13 +6,13 @@ define human Customer;
 when the forniture XRJar changes color to #ffffff
 then the button ContactMe changes visible to yes
 
-when the human Customer inserts ?? the art XRJar
-if the art XRJar is inside?? the human customer
-then the human Customer takes?? the art XR-Jar
+when the human Customer gets the art XRJar
+if the human customer contains the art XRJar
+then the human Customer gets the art XR-Jar
 
 when the human Customer interacts with the art XRJar
 then the art XRJar rotates of 90 degrees
 
 when the human Customer pushes the button ExitButton
-if the human Customer capacity > 0  ???
+if the human Customer count > 0
 then the text LastChance5Off changes visible to yes

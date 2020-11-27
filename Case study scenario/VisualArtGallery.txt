@@ -1,0 +1,12 @@
+when the Visitor teleports to scene MuseumLobby then
+the robot Artist starts-animation "Welcome"
+
+when the human visitor interacts with the building Artwork1_Entrance then
+the robot Artist starts-animation "artwork1Presentation"
+and the light globalLight intensity = 0
+and the light spotLight1 intensity = 1
+
+when the human visitor interacts with the art Artwork_1 then
+the forniture Artwork_1_plate changes visible to yes
+
+
