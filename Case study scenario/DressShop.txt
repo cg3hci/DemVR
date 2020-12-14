@@ -1,24 +1,24 @@
 define robot NPCAssistant;
 define human Customer;
-define video XRBootsAdvertisment;
+define video XRDressAdvertisement;
 define robot Mannequin;
 define scene Outlet;
 
 when the human Customer teleports to scene Outlet
 then the robot NPCAssistant starts-animation "routineWelcome" and
-then the forniture salesArea switches highlight to on;
+then the furniture salesArea switches highlight to on;
 
 when the human Customer pushes the button HelpButton
 then the video tutorialOutlet plays
 
-when the human Customer interacts with the clothing XRBoots
-if the video XRBootsAdvertisement is paused
-then the video XRBootsAdvertisement plays
+when the human Customer interacts with the clothing XRDress
+if the video XRDressAdvertisement is paused
+then the video XRDressAdvertisement plays
 
-when the video XRBootsAdvertisement plays
+when the video XRDressAdvertisement plays
 then the text priceTag changes visible to yes
 
-when the human Customer inserts the clothing XRBoots
-if the robot Mannequin wears the clothing XRBoots
-then the robot Mannequin unwears the clothing XRBoots and
-then the container Cabinet removes the clothing XRBoots
+when the human Customer inserts the clothing XRDress
+if the robot Mannequin wears the clothing XRDress
+then the robot Mannequin unwears the clothing XRDress and
+then the container Cabinet removes the clothing XRDress
