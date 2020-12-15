@@ -18,7 +18,6 @@ then the video XRDressAdvertisement plays
 when the video XRDressAdvertisement plays
 then the text priceTag changes visible to yes
 
-when the human Customer inserts the clothing XRDress
-if the robot Mannequin wears the clothing XRDress
-then the robot Mannequin unwears the clothing XRDress and
-then the container Cabinet removes the clothing XRDress
+when the human Customer pushes the button TryMeButton
+then the robot Mannequin wears the clothing XRDress and
+then the container Cabinet inserts the clothing XRDress 
