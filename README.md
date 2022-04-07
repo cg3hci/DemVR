@@ -1,4 +1,4 @@
-# DemVR
+# ECARules4All
 
 Code repository for the implementation of the ECARules4All project
 
